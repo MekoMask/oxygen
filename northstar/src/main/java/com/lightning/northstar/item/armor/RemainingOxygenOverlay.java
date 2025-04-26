@@ -17,7 +17,7 @@ import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
 public class RemainingOxygenOverlay implements IGuiOverlay {
 	public static final RemainingOxygenOverlay INSTANCE = new RemainingOxygenOverlay();
-	
+
 	@Override
 	public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
 		Minecraft mc = Minecraft.getInstance();
@@ -25,44 +25,24 @@ public class RemainingOxygenOverlay implements IGuiOverlay {
 			return;
 
 		LocalPlayer player = mc.player;
-		if (player == null)
+		if (player == null || player.isCreative())
 			return;
-		if (player.isCreative())
-			return;
-		PoseStack poseStack = graphics.pose();
 
-		
+		PoseStack poseStack = graphics.pose();
 		poseStack.pushPose();
-		
-		ItemStack oxytank = OxygenStuff.getOxy(player);
-		
-		if(oxytank.isEmpty()) {
+
+		ItemStack oxygenTank = OxygenStuff.getOxy(player);
+		if (oxygenTank.isEmpty())
 			return;
-		}
-		
-		int timeLeft = oxytank.getOrCreateTag().getInt("Oxygen");
-		
-		poseStack.translate(width / 2 + 90, height - 53 + (oxytank.getItem()
-			.isFireResistant() ? 9 : 0), 0);
-		
-		Component text = Components.literal(net.minecraft.util.StringUtil.formatTickDuration(Math.max(0, timeLeft - 1) * 20));
-		GuiGameElement.of(oxytank)
-			.at(0, 0)
-			.render(graphics);
-		int color = 0xFF_FFFFFF;
-		if (timeLeft < 60 && timeLeft % 2 == 0) {
-			color = Color.mixColors(0xFF_FF0000, color, Math.max(timeLeft / 60f, .25f));
-		}
+
+		int oxygenLevel = oxygenTank.getOrCreateTag().getInt("Oxygen");
+		poseStack.translate(width / 2 + 90, height - 53, 0);
+
+		Component text = Components.literal(oxygenLevel + "mb");
+		GuiGameElement.of(oxygenTank).at(0, 0).render(graphics);
+		int color = oxygenLevel < 60 ? Color.mixColors(0xFF_FF0000, 0xFF_FFFFFF, Math.max(oxygenLevel / 60f, .25f)) : 0xFF_FFFFFF;
 		graphics.drawString(mc.font, text, 16, 5, color);
-	
+
 		poseStack.popPose();
 	}
 }
-
-
-
-
-
-
-
-

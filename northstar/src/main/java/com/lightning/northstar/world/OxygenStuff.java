@@ -1,279 +1,133 @@
 package com.lightning.northstar.world;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 
-import org.lwjgl.glfw.GLFW;
-
-import java.util.Set;
+import net.minecraft.world.level.material.FluidState;
 
 import com.lightning.northstar.Northstar;
 import com.lightning.northstar.NorthstarTags;
-import com.lightning.northstar.NorthstarTags.NorthstarItemTags;
-import com.lightning.northstar.particle.GlowstoneParticleData;
-import com.lightning.northstar.world.dimension.NorthstarPlanets;
-import com.mojang.blaze3d.platform.InputConstants;
-import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlock;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(modid = Northstar.MOD_ID, bus = Bus.FORGE)
 public class OxygenStuff {
-	public static HashMap<BlockPos, Integer> oxygenBlocks = new HashMap<BlockPos, Integer>();
-	public static HashMap<Set<BlockPos>,ResourceKey<Level>> oxygenSources = new HashMap<Set<BlockPos>,ResourceKey<Level>>();
-	public static HashMap<Set<BlockPos>,ResourceKey<Level>> tickingQueue = new HashMap<Set<BlockPos>,ResourceKey<Level>>();
-	public static List<LivingEntity> oxygenatedEntities = new ArrayList<LivingEntity>();
-	public static int power = 2000;
-	public static int maximumOxy = 2000;
+	public static final HashMap<Set<BlockPos>, ResourceKey<Level>> oxygenSources = new HashMap<>();
 	public static boolean debugMode = true;
-
-	public static boolean hasOxygen(BlockPos pos, ResourceKey<Level> level) {
-		if(NorthstarPlanets.getPlanetOxy(level))
-			return true;
-		if(!oxygenSources.containsValue(level)) {return false;}
-		for(Entry<Set<BlockPos>, ResourceKey<Level>> blocks:	oxygenSources.entrySet()) {
-			if(blocks.getValue() == level) {
-				if(blocks.getKey().contains(pos)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	@SubscribeEvent
-	public static void onWorldTick(TickEvent.LevelTickEvent event){
-		if(!event.level.isClientSide)
-			return;
-		long t = event.level.getGameTime();
-//		if(InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_O)){
-//			debugMode = true;
-//		}else {
-//			debugMode = false;
-//		}
-		if(t % 40 == 0 && debugMode) {
-			try {
-				for(Entry<Set<BlockPos>, ResourceKey<Level>> blocks:	oxygenSources.entrySet()) {
-					if(blocks.getValue() == event.level.dimension()) {
-						for(BlockPos pos : blocks.getKey()) {
-							event.level.addParticle(new GlowstoneParticleData(), pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, 0,0,0);
-						}
-					}
-
-				}
-			}catch(Exception e) {
-				//huh
-			}
-		}
-
-	}
-	public static Set<BlockPos> spreadOxy(Level level, Set<BlockPos> list, int maxSize) {
-		List<BlockPos> newBlocks = new ArrayList<BlockPos>();
-		newBlocks.addAll(list);
-		for(int i = 0; i < newBlocks.size() && i < maxSize;i++) {
-			System.out.println("UGHHH");
-			BlockPos pos = newBlocks.get(i);
-			for(Direction direction : Direction.values()) {
-				BlockPos blockpos = pos.relative(direction);
-				if(list.contains(blockpos)) {
-					continue;
-				}
-				if(getIsAir(level.getBlockState(blockpos)) && list.size() < maxSize)
-				{list.add(blockpos); newBlocks.add(blockpos);}
-			}
-		}
-		return list;
-	}
-
-	public static void removeSource(BlockPos pos, Level level, Set<BlockPos> list, Set<BlockPos> newlist) {
-		Set<BlockPos> templist = list;
-		oxygenSources.remove(list, level.dimension());
-		if(!level.isClientSide) {
-			for(BlockPos block : templist) {
-				if(!newlist.contains(block)) {
-					if(!level.getBlockState(block).isAir()) {
-						level.getBlockState(block).tick((ServerLevel) level, block, level.random);
-					}
-					level.setBlock(block, level.getBlockState(block).updateShape(Direction.NORTH, level.getBlockState(block), level, block, block), 2);
-				}
-			}
-		}
-	}
-
-	public static List<BlockPos> spreadOxyNew(BlockPos pos, Level level, List<BlockPos> list, int maxSize) {
-		java.util.List<BlockPos> newblockslist = new ArrayList<BlockPos>();
-		boolean flag = false;
-		BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
-		for(Direction direction : Direction.values()) {
-			blockpos.setWithOffset(pos, direction);
-			BlockPos newpos = new BlockPos(blockpos.getX(), blockpos.getY(), blockpos.getZ());
-			if(list.contains(blockpos))
-				continue;
-			if(getIsAir(level.getBlockState(newpos)) && list.size() < maxSize)
-			{list.add(newpos); newblockslist.add(newpos);flag = true;}
-		}
-		if(flag) {
-			int i = 0;
-			while(newblockslist.size() != 0 || list.size() < maxSize) {
-				for(;newblockslist.get(i) == null || list.size() > maxSize; i++) {
-					BlockPos blockpos2 = newblockslist.get(i);
-//        			System.out.println(blockpos2);
-					BlockPos.MutableBlockPos mutpos = blockpos2.mutable();
-					for(Direction direction : Direction.values()) {
-						mutpos.setWithOffset(pos, direction);
-						BlockPos newpos = new BlockPos(mutpos.getX(), mutpos.getY(), mutpos.getZ());
-						if(getIsAir(level.getBlockState(newpos)) && list.size() < maxSize && !list.contains(blockpos2))
-						{list.add(newpos); newblockslist.add(newpos);}
-					}
-					newblockslist.remove(blockpos2);
-					i--;
-				}
-			}
-		}
-		return list;
-	}
-	public static List<BlockPos> spreadOxy2(Level level, List<BlockPos> list, int maxSize, List<BlockPos> parentList) {
-		java.util.List<BlockPos> newblockslist = new ArrayList<BlockPos>();
-		BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
-		for(int i = 0; i < list.size() && list.size() < maxSize; i++) {
-			BlockPos iPos = list.get(i);
-//        	System.out.println(list.size());
-			for(Direction direction : Direction.values()) {
-				blockpos.setWithOffset(iPos, direction);
-				BlockPos newpos = new BlockPos(blockpos.getX(), blockpos.getY(), blockpos.getZ());
-				if(list.contains(newpos) || parentList.contains(newpos))
-					continue;
-				if(getIsAir(level.getBlockState(newpos)) && list.size() < maxSize)
-				{newblockslist.add(newpos);}
-			}
-		}
-		parentList.addAll(newblockslist);
-		return newblockslist;
-	}
-
-	public static boolean getIsAir(BlockState state) {
-		System.out.println("Checking tag match for AIR_PASSES_THROUGH: " + state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag));
-		System.out.println("Fluid state is empty: " + state.getFluidState().isEmpty());
-
-		boolean slideFlag = false;
-		if(state.getBlock() instanceof SlidingDoorBlock) {
-			slideFlag = state.getValue(SlidingDoorBlock.OPEN);
-		}
-		//System.out.println(state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag) || !state.getFluidState().isEmpty() || slideFlag);
-		return state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag) || !state.getFluidState().isEmpty() || slideFlag;
-	}
-
-
-	public static ItemStack getOxy(LivingEntity entity) {
-		for(ItemStack items : entity.getArmorSlots())
-		{
-			if (items.is(NorthstarTags.NorthstarItemTags.OXYGEN_SOURCES.tag)){
-				return items;
-			}
-		}
-
-
-		return new ItemStack(Items.AIR);
-
-	}
+	public static final int maximumOxy = 2000; // Maximum oxygen capacity
+	private static final List<LivingEntity> oxygenatedEntities = new ArrayList<>();
 
 	public static void register() {
 		System.out.println("Checking for oxygen for " + Northstar.MOD_ID);
 	}
-	@SuppressWarnings("unused")
-	@SubscribeEvent
-	public static void onUpdateLivingEntity(LivingTickEvent event) {
-		LivingEntity entity = event.getEntity();
-		Level world = entity.level();
-		boolean tick = world.getGameTime() % 20 == 0;
-		if (world == null)
-			return;
-		if(tick) {
-			boolean creativeFlag = false;
-			if(entity instanceof Player) {
-				creativeFlag = ((Player) entity).isCreative();
-			}
-			if(checkForAir(entity) || NorthstarPlanets.getPlanetOxy(world.dimension()) || creativeFlag) {
-				return;
-			}
 
-			else{
-//				System.out.println("clover would like to cry but they have no eyes");
-				boolean oxyflag = false;
-				int sealedArmorCount = 0;
-				for(ItemStack armor : entity.getArmorSlots()) {
-					if(armor.is(NorthstarItemTags.OXYGEN_SEALING.tag))
-						sealedArmorCount++;
-					if(armor.getTag() == null)
-						continue;
-					if(armor.getTag().contains("Oxygen") && (armor.is(NorthstarTags.NorthstarItemTags.OXYGEN_SOURCES.tag)) && armor.getTag().getInt("Oxygen") > 0 && !OxygenStuff.checkForAir(entity)) {
-						depleteOxy(armor);
-						oxyflag = true;
-					}
-				}
-				if(oxyflag && sealedArmorCount >= 4) {
-					if(!oxygenatedEntities.contains(entity)) {
-						oxygenatedEntities.add(entity);
-					}
-					return;
-				}
-			}
-			if(oxygenatedEntities.contains(entity)) {
-				oxygenatedEntities.remove(entity);
-			}
-		}
-
-	}
-	public static boolean checkForAir(LivingEntity entity) {
-		if(entity.level().isClientSide)
+	public static boolean hasOxygen(BlockPos pos, ResourceKey<Level> level) {
+		if (!oxygenSources.containsValue(level)) {
 			return false;
-		try {
-			for(Entry<Set<BlockPos>, ResourceKey<Level>> blocks:	oxygenSources.entrySet()) {
-				if(blocks.getValue() == entity.level().dimension()) {
-					if((blocks.getKey().contains(entity.blockPosition()) || blocks.getKey().contains(entity.blockPosition().above()))) {
-						return true;
-					}
-				}
-			}
-		}catch(Exception e) {
-			//bruh
 		}
-
-
+		for (Entry<Set<BlockPos>, ResourceKey<Level>> blocks : oxygenSources.entrySet()) {
+			if (blocks.getValue() == level && blocks.getKey().contains(pos)) {
+				return true;
+			}
+		}
 		return false;
 	}
+
+	public static Set<BlockPos> spreadOxygen(Level level, BlockPos origin, int maxSize) {
+		// Use FloodFill3D.run for efficient oxygen spreading
+		FloodFill3D.SolidBlockPredicate oxygenPredicate = (lvl, pos, state, positions, queue, direction) -> {
+			return getIsAir(state);
+		};
+
+		return FloodFill3D.run(level, origin, maxSize, oxygenPredicate, false);
+	}
+
+	public static void removeSource(BlockPos pos, Level level, Set<BlockPos> list) {
+		oxygenSources.remove(list, level.dimension());
+		if (!level.isClientSide) {
+			for (BlockPos block : list) {
+				if (!level.getBlockState(block).isAir()) {
+					level.setBlock(block, level.getBlockState(block).updateShape(null, null, level, null, null), 2);
+				}
+			}
+		}
+	}
+
+	public static boolean getIsAir(BlockState state) {
+		return state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag) || state.getFluidState().isEmpty();
+	}
+
+	public static boolean checkForAir(LivingEntity entity) {
+		Level level = entity.level();
+		BlockPos pos = entity.blockPosition();
+		ResourceKey<Level> dimension = level.dimension();
+
+		// Check if the entity's position is within an oxygenated area
+		for (
+				Map.Entry<Set<BlockPos>, ResourceKey<Level>> entry : oxygenSources.entrySet()) {
+			if (entry.getValue().equals(dimension) && entry.getKey().contains(pos)) {
+				return true;
+			}
+		}
+
+		// Check if the block state at the entity's position allows air to pass through
+		BlockState state = level.getBlockState(pos);
+		return isAirPassable(state, level.getFluidState(pos));
+
+	}
+
+	private static boolean isAirPassable(BlockState state, FluidState fluidState) {
+		return state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag) || !fluidState.isEmpty();
+	}
+
+	public static ItemStack getOxy(LivingEntity entity) {
+		for (ItemStack item : entity.getArmorSlots()) {
+			if (item.is(NorthstarTags.NorthstarItemTags.OXYGEN_SOURCES.tag)) {
+				return item;
+			}
+		}
+		return new ItemStack(Items.AIR);
+	}
+
 	public static void depleteOxy(ItemStack stack) {
-		CompoundTag tag = stack.getTag();
-		ListTag lore = new ListTag();
-		int oxy = tag.getInt("Oxygen");
-		int newOxy = Mth.clamp(oxy - 1, 0, 5000);
-		lore.add(StringTag.valueOf(Component.Serializer.toJson(Component.literal( "Oxygen: " + newOxy + "mb").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(false))).toString()));
-		tag.remove("Oxygen");
+		if (stack.isEmpty()) return;
+
+		CompoundTag tag = stack.getOrCreateTag();
+		int currentOxy = tag.getInt("Oxygen");
+		int newOxy = Math.max(currentOxy, 0);
+
+		// Update the oxygen value in the ItemStack
 		tag.putInt("Oxygen", newOxy);
+
+		// Update the item lore to reflect the new oxygen value
+		ListTag lore = new ListTag();
+		lore.add(StringTag.valueOf(Component.Serializer.toJson(
+				Component.literal("Oxygen: " + newOxy + "mb").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(false)))));
 		stack.getOrCreateTagElement("display").put("Lore", lore);
+	}
+
+	public static void oxygenateEntity(LivingEntity entity) {
+		if (!oxygenatedEntities.contains(entity)) {
+			oxygenatedEntities.add(entity);
+		}
+	}
+
+	public static void deoxygenateEntity(LivingEntity entity) {
+		oxygenatedEntities.remove(entity);
 	}
 
 }

@@ -20,43 +20,52 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 
 public class OxygenGeneratorBlock extends HorizontalKineticBlock implements IBE<OxygenGeneratorBlockEntity> {
 
-	public OxygenGeneratorBlock(Properties pProperties) {
-		super(pProperties);
+	public OxygenGeneratorBlock(Properties properties) {
+		super(properties);
 	}
-	@Override
-	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-		return IBE.super.newBlockEntity(pPos, pState);
-	}
-	@Override
-	public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-		System.out.println("BIG STEVE IS REAL");
-		if (!pState.is(pNewState.getBlock())) {
-			BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-			if (blockentity instanceof OxygenGeneratorBlockEntity) {
-				((OxygenGeneratorBlockEntity)blockentity).removeOxy((OxygenGeneratorBlockEntity) blockentity, new HashSet<BlockPos>());
-			}
 
-			super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return IBE.super.newBlockEntity(pos, state);
+	}
+
+	@Override
+	public void onRemove(BlockState oldState, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (!oldState.is(newState.getBlock())) {
+			BlockEntity blockEntity = level.getBlockEntity(pos);
+			if (blockEntity instanceof OxygenGeneratorBlockEntity oxygenGenerator) {
+				// Remove oxygen blobs when the block is removed
+				oxygenGenerator.removeOxygen();
+			}
+			super.onRemove(oldState, level, pos, newState, isMoving);
 		}
 	}
+
 	@Override
 	public Axis getRotationAxis(BlockState state) {
 		return Axis.Y;
 	}
+
 	@Override
 	public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
 		return face == Direction.DOWN;
 	}
-	public boolean isPathfindable(BlockState pState, BlockGetter pLevel, BlockPos pPos, PathComputationType pType) {
+
+	@Override
+	public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
 		return false;
 	}
-	public RenderShape getRenderShape(BlockState pState) {
+
+	@Override
+	public RenderShape getRenderShape(BlockState state) {
 		return RenderShape.MODEL;
 	}
+
 	@Override
 	public Class<OxygenGeneratorBlockEntity> getBlockEntityClass() {
 		return OxygenGeneratorBlockEntity.class;
 	}
+
 	@Override
 	public BlockEntityType<? extends OxygenGeneratorBlockEntity> getBlockEntityType() {
 		return NorthstarBlockEntityTypes.OXYGEN_GENERATOR.get();
