@@ -126,18 +126,6 @@ public class NorthstarTags {
 	public enum NorthstarBlockTags {
 
 		AIR_PASSES_THROUGH(NameSpace.MOD),
-		ARGYRE_REPLACES(NameSpace.MOD),
-		NATURAL_MARS_BLOCKS(NameSpace.MOD),
-		NATURAL_VENUS_BLOCKS(NameSpace.MOD),
-		NATURAL_MOON_BLOCKS(NameSpace.MOD),
-		NATURAL_MERCURY_BLOCKS(NameSpace.MOD),
-		HEAVY_BLOCKS(NameSpace.MOD),
-		SUPER_HEAVY_BLOCKS(NameSpace.MOD),
-		TIER_1_HEAT_RESISTANCE(NameSpace.MOD),
-		TIER_2_HEAT_RESISTANCE(NameSpace.MOD),
-		TIER_3_HEAT_RESISTANCE(NameSpace.MOD),
-		MOON_BLOCKS(NameSpace.MOD),
-		MARS_BLOCKS(NameSpace.MOD)
 		;
 
 		public final TagKey<Block> tag;

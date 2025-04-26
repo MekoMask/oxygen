@@ -30,8 +30,10 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+//import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
+@SuppressWarnings("removal")
 public class OxygenGeneratorBlockEntity extends KineticBlockEntity implements IHaveGoggleInformation, IHaveHoveringInformation{
 	public int maxOxy;
 	public int minOxy;
@@ -57,8 +59,8 @@ public class OxygenGeneratorBlockEntity extends KineticBlockEntity implements IH
 
 		if(Math.abs(this.speed) > 0 && !isOverStressed() && hasOxy) {
 			BlockPos pos = getBlockPos();
-			if (level.random.nextFloat() < AllConfigs.client().fanParticleDensity.get()) {
-				level.addParticle(new OxyFlowParticleData(getBlockPos().offset(0, 1, 0)), pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0, 0, 0);}
+			if (level.random.nextFloat() < AllConfigs.client().fanParticleDensity.get())
+				level.addParticle(new OxyFlowParticleData(getBlockPos().offset(0, 1, 0)), pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0, 0, 0);
 			audioTick++;
 			if(level.isClientSide) {
 				if(audioTick % 13 == 0) {
@@ -71,15 +73,19 @@ public class OxygenGeneratorBlockEntity extends KineticBlockEntity implements IH
 			//this is called every 40 ticks to check if any of the blocks have changed and changes the shape of the oxygen's influence accordingly
 			//its also really laggy and makes me want to cry
 			Set<BlockPos> newList = new HashSet<BlockPos>();
-		  //System.out.println("SPREAD THE DISEASE SPREAD THE DISEASE");
-			if(level.getBlockState(getBlockPos().above()).is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag))
-			{ newList.add(getBlockPos().above()); }
+//		  System.out.println("SPREAD THE DISEASE SPREAD THE DISEASE");
+			newList.add(getBlockPos().above());
+//			if(level.getBlockState(getBlockPos().above()).is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag)) {
+//				newList.add(getBlockPos().above());
+//				System.out.println("Added Block"); }
 			if(newList.size() < maxOxy) {
 				OxygenStuff.spreadOxy(level, newList, maxOxy);
 			}
 			this.drain(6);
 
 //		  System.out.println("Oxy amount: " + this.tank.getPrimaryHandler().getFluidAmount());
+
+
 
 			// I desperately need to find out a more lag friendly way to spread oxygen,
 			// but for now the old laggy method will do

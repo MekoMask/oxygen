@@ -174,10 +174,14 @@ public class OxygenStuff {
 	}
 
 	public static boolean getIsAir(BlockState state) {
+		System.out.println("Checking tag match for AIR_PASSES_THROUGH: " + state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag));
+		System.out.println("Fluid state is empty: " + state.getFluidState().isEmpty());
+
 		boolean slideFlag = false;
 		if(state.getBlock() instanceof SlidingDoorBlock) {
 			slideFlag = state.getValue(SlidingDoorBlock.OPEN);
 		}
+		System.out.println(state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag) || !state.getFluidState().isEmpty() || slideFlag);
 		return state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag) || !state.getFluidState().isEmpty() || slideFlag;
 	}
 
