@@ -1,50 +1,72 @@
 package com.lightning.northstar.item.armor;
 
-import javax.annotation.Nullable;
+import java.util.Set;
+import java.util.function.Consumer;
 
-import com.lightning.northstar.item.NorthstarCreativeModeTab;
+import org.jetbrains.annotations.NotNull;
 
+import com.lightning.northstar.client.renderer.armor.BrokenIronSpaceSuitModelRenderer;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.item.GeoArmorItem;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import software.bernie.example.registry.ItemRegistry;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class BrokenIronSpaceSuitArmorItem extends GeoArmorItem implements IAnimatable{
-	private AnimationFactory factory = GeckoLibUtil.createFactory(this);
+
+public class BrokenIronSpaceSuitArmorItem extends ArmorItem implements GeoItem{
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	public static final EquipmentSlot SLOT = EquipmentSlot.CHEST;
 	
-	public BrokenIronSpaceSuitArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Properties builder) {
-		super(materialIn, slot, builder.tab(NorthstarCreativeModeTab.NORTHSTAR_TAB));
+	public BrokenIronSpaceSuitArmorItem(ArmorMaterial materialIn, Type slot, Properties builder) {
+		super(materialIn, slot, builder);
 	}
 
-	// Predicate runs every frame
-    private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event) {
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("idle", EDefaultLoopTypes.LOOP));
-        return PlayState.CONTINUE;
-    }
+	@Override
+	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+		consumer.accept(new IClientItemExtensions() {
+			private GeoArmorRenderer<?> renderer;
 
-	// All you need to do here is add your animation controllers to the
-	// AnimationData
-	@Override
-	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController<BrokenIronSpaceSuitArmorItem>(this, "controller", 20, this::predicate));
+			@Override
+			public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
+				if (this.renderer == null)
+					this.renderer = new BrokenIronSpaceSuitModelRenderer();
+
+				// This prepares our GeoArmorRenderer for the current render frame.
+				// These parameters may be null however, so we don't do anything further with them
+				this.renderer.prepForRender(livingEntity, itemStack, equipmentSlot, original);
+
+				return this.renderer;
+			}
+		});
 	}
+
+	// Let's add our animation controller
 	@Override
-	public AnimationFactory getFactory() {
-		return this.factory;
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		
+	}
+
+	@Override
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return this.cache;
 	}
 	
 	public static boolean hasChestplateOn(Player player) {

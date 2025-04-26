@@ -36,9 +36,6 @@ public class SpaceSuitFirstPersonRenderer{
 		if(mc.player != null && mc.player.getInventory().getArmor(2).getItem() == NorthstarItems.IRON_SPACE_SUIT_CHESTPIECE.get()) {
 			activeHand = NorthstarEntityResources.IRONSPACESUIT_ARMOR_ARM;
 		}
-		if(mc.player != null && mc.player.getInventory().getArmor(2).getItem() == NorthstarItems.MARTIAN_STEEL_SPACE_SUIT_CHESTPIECE.get()) {
-			activeHand = NorthstarEntityResources.MARTIANSTEELSPACESUITARMOR_ARM;
-		}
 		if(mc.player != null && mc.player.getInventory().getArmor(2).getItem() == NorthstarItems.BROKEN_IRON_SPACE_SUIT_CHESTPIECE.get()) {
 			activeHand = NorthstarEntityResources.BROKEN_IRONSPACESUIT_ARMOR_ARM;
 		}

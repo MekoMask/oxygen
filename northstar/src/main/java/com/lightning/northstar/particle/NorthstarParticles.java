@@ -19,15 +19,9 @@ import net.minecraftforge.registries.RegistryObject;
 public enum NorthstarParticles {
 	
 	GLOWSTONE_PARTICLE(GlowstoneParticleData::new),
-	ROCKET_FLAME(RocketFlameParticleData::new),
-	ROCKET_FLAME_LANDING(RocketFlameLandingParticleData::new),
-	ROCKET_SMOKE(RocketSmokeParticleData::new),
-	ROCKET_SMOKE_LANDING(RocketSmokeLandingParticleData::new),
 	COLD_AIR(ColdAirParticleData::new),
 	OXY_FLOW(OxyFlowParticleData::new),
 	SNOWFLAKE(SnowflakeParticleData::new),
-	SNAIL_SLIME(SnailSlimeParticleData::new),
-	SULFUR_POOF(SulfurPoofParticleData::new),
 	DUST_CLOUD(DustCloudParticleData::new);
 	
 	private final ParticleEntry<?> entry;

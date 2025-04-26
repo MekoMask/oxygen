@@ -25,7 +25,7 @@ public class OxygenGeneratorRenderer extends KineticBlockEntityRenderer<OxygenGe
 
 	@Override
 	protected void renderSafe(OxygenGeneratorBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
-			int light, int overlay) {
+							  int light, int overlay) {
 		if (Backend.canUseInstancing(be.getLevel())) return;
 
 		final Axis boxAxis = be.getBlockState().getValue(BlockStateProperties.AXIS);

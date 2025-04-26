@@ -37,7 +37,7 @@ public class DustCloudParticle extends SimpleAnimatedParticle {
 		this.zo = z;
 		setAlpha(0.2f);
 	}
-	
+
 	@Override
 	public void tick() {
 		super.tick();
@@ -45,17 +45,17 @@ public class DustCloudParticle extends SimpleAnimatedParticle {
 		z-=0.25;
 		this.setAlpha(0.2f);
 	}
-	
+
 	public ParticleRenderType getRenderType() {
 		return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
 	}
-	
+
 	@Override
 	public int getLightColor(float partialTick) {
-		BlockPos blockpos = new BlockPos(this.x, this.y, this.z);
+		BlockPos blockpos = new BlockPos((int)this.x, (int)this.y, (int)this.z);
 		return this.level.isLoaded(blockpos) ? LevelRenderer.getLightColor(level, blockpos) : 0;
 	}
-	
+
 	private void selectSprite(int index) {
 		setSprite(sprites.get(index, 8));
 	}
@@ -63,7 +63,7 @@ public class DustCloudParticle extends SimpleAnimatedParticle {
 		float f = ((float)this.age + pScaleFactor) / (float)this.lifetime;
 		return this.quadSize * (1.0F - f * f * 0.5F);
 	}
-		
+
 	public static class Factory implements ParticleProvider<DustCloudParticleData> {
 		private final SpriteSet spriteSet;
 
@@ -72,11 +72,11 @@ public class DustCloudParticle extends SimpleAnimatedParticle {
 		}
 
 		public Particle createParticle(DustCloudParticleData data, ClientLevel worldIn, double x, double y, double z,
-				double xSpeed, double ySpeed, double zSpeed) {
+									   double xSpeed, double ySpeed, double zSpeed) {
 			return new DustCloudParticle(worldIn, x, y, z, zSpeed, zSpeed, zSpeed, this.spriteSet);
 		}
 	}
-		
+
 	public static class Data extends BasicParticleData<DustCloudParticle> {
 		@Override
 		public IBasicParticleFactory<DustCloudParticle> getBasicFactory() {
@@ -89,6 +89,5 @@ public class DustCloudParticle extends SimpleAnimatedParticle {
 			return NorthstarParticles.DUST_CLOUD.get();
 		}
 	}
-		
-}
 
+}

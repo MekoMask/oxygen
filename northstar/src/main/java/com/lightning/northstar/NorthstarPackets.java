@@ -7,13 +7,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.lightning.northstar.block.tech.rocket_controls.RocketControlsInputPacket;
-import com.lightning.northstar.block.tech.rocket_station.RocketStationEditPacket;
-import com.lightning.northstar.block.tech.telescope.TelescopePrintPacket;
 import com.lightning.northstar.block.tech.temperature_regulator.TemperatureRegulatorEditPacket;
-import com.lightning.northstar.contraptions.RocketContraptionQuickSyncPacket;
-import com.lightning.northstar.contraptions.RocketContraptionSyncPacket;
-import com.lightning.northstar.contraptions.RocketControlPacket;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 
 import net.minecraft.core.BlockPos;
@@ -29,33 +23,25 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 public enum NorthstarPackets {
 	//client to server
-	UPDATE_ROCKET_STATION(RocketStationEditPacket.class, RocketStationEditPacket::new, PLAY_TO_SERVER),
-	UPDATE_TEMPERATURE_REGULATOR(TemperatureRegulatorEditPacket.class, TemperatureRegulatorEditPacket::new, PLAY_TO_SERVER),
-	TELESCOPE_PRINT(TelescopePrintPacket.class, TelescopePrintPacket::new, PLAY_TO_SERVER),
-	ROCKET_CONTROLS_INPUT(RocketControlsInputPacket.class, RocketControlsInputPacket::new, PLAY_TO_SERVER),
-	//server to client
-	ROCKET_SYNC_PACKET(RocketContraptionSyncPacket.class, RocketContraptionSyncPacket::new, PLAY_TO_CLIENT),
-	ROCKET_QUICK_SYNC_PACKET(RocketContraptionQuickSyncPacket.class, RocketContraptionQuickSyncPacket::new, PLAY_TO_CLIENT),
-	ROCKET_CONTROL_PACKET(RocketControlPacket.class, RocketControlPacket::new, PLAY_TO_CLIENT);
+	UPDATE_TEMPERATURE_REGULATOR(TemperatureRegulatorEditPacket.class, TemperatureRegulatorEditPacket::new, PLAY_TO_SERVER);
 
 	public static final ResourceLocation CHANNEL_NAME = Northstar.asResource("main");
 	public static final int NETWORK_VERSION = 3;
-	public static final String NETWORK_VERSION_STR = String.valueOf(NETWORK_VERSION);
+	public static final String NETWORK_VERSION_STR = String.valueOf(3);
 	private static SimpleChannel channel;
-
 	private PacketType<?> packetType;
 
 	<T extends SimplePacketBase> NorthstarPackets(Class<T> type, Function<FriendlyByteBuf, T> factory,
-		NetworkDirection direction) {
+												  NetworkDirection direction) {
 		packetType = new PacketType<>(type, factory, direction);
 	}
 
 	public static void registerPackets() {
 		channel = NetworkRegistry.ChannelBuilder.named(CHANNEL_NAME)
-			.serverAcceptedVersions(NETWORK_VERSION_STR::equals)
-			.clientAcceptedVersions(NETWORK_VERSION_STR::equals)
-			.networkProtocolVersion(() -> NETWORK_VERSION_STR)
-			.simpleChannel();
+				.serverAcceptedVersions(NETWORK_VERSION_STR::equals)
+				.clientAcceptedVersions(NETWORK_VERSION_STR::equals)
+				.networkProtocolVersion(() -> NETWORK_VERSION_STR)
+				.simpleChannel();
 
 		for (NorthstarPackets packet : values())
 			packet.packetType.register();
@@ -66,9 +52,7 @@ public enum NorthstarPackets {
 	}
 
 	public static void sendToNear(Level world, BlockPos pos, int range, Object message) {
-		getChannel().send(
-			PacketDistributor.NEAR.with(TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), range, world.dimension())),
-			message);
+		//getChannel().send(PacketDistributor.NEAR.with(TargetPoint.p((double)pos.m_123341_(), (double)pos.m_123342_(), (double)pos.m_123343_(), (double)range, world.m_46472_())), message);
 	}
 
 	private static class PacketType<T extends SimplePacketBase> {
@@ -95,10 +79,11 @@ public enum NorthstarPackets {
 
 		private void register() {
 			getChannel().messageBuilder(type, index++, direction)
-				.encoder(encoder)
-				.decoder(decoder)
-				.consumerNetworkThread(handler)
-				.add();
+					.encoder(encoder)
+					.decoder(decoder)
+					.consumerNetworkThread(handler)
+					.add();
 		}
+
 	}
 }

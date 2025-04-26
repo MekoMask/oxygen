@@ -1,6 +1,5 @@
 package com.lightning.northstar;
 
-import com.lightning.northstar.block.tech.rocket_controls.RocketControlsHandler;
 import com.lightning.northstar.item.armor.RemainingOxygenOverlay;
 import com.lightning.northstar.particle.NorthstarParticles;
 
@@ -15,16 +14,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class NorthstarClient {
-	
-	@SubscribeEvent
-	public static void onTick(ClientTickEvent event) {
-		
-		if (event.phase == Phase.START) {
-			RocketControlsHandler.tick();
-		}
-		
-	}
-	
+
 	public static void onCtorClient(IEventBus modEventBus, IEventBus forgeEventBus) {
 		modEventBus.addListener(NorthstarParticles::registerFactories);
 	}

@@ -14,12 +14,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import com.lightning.northstar.Northstar;
 import com.lightning.northstar.block.NorthstarTechBlocks;
-import com.lightning.northstar.block.tech.circuit_engraver.EngravingRecipe;
 import com.lightning.northstar.block.tech.electrolysis_machine.ElectrolysisRecipe;
-import com.lightning.northstar.block.tech.ice_box.FreezingRecipe;
 import com.lightning.northstar.compat.jei.category.ElectrolysisCategory;
-import com.lightning.northstar.compat.jei.category.EngravingCategory;
-import com.lightning.northstar.compat.jei.category.FreezingCategory;
 import com.lightning.northstar.item.NorthstarRecipeTypes;
 import com.simibubi.create.AllFluids;
 import com.simibubi.create.compat.jei.BlueprintTransferHandler;
@@ -39,6 +35,7 @@ import com.simibubi.create.content.redstone.link.controller.LinkedControllerScre
 import com.simibubi.create.content.trains.schedule.ScheduleScreen;
 import com.simibubi.create.foundation.config.ConfigBase.ConfigBool;
 import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
+import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
@@ -59,6 +56,7 @@ import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.runtime.IIngredientManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -80,20 +78,6 @@ public class NorthstarJei implements IModPlugin {
 
 		CreateRecipeCategory<?>
 
-		engraving = builder(EngravingRecipe.class)
-		.addTypedRecipes(NorthstarRecipeTypes.ENGRAVING)
-		.catalyst(NorthstarTechBlocks.CIRCUIT_ENGRAVER::get)
-		.itemIcon(NorthstarTechBlocks.CIRCUIT_ENGRAVER.get())
-		.emptyBackground(177, 70)
-		.build("engraving", EngravingCategory::new),
-		
-		freezing = builder(FreezingRecipe.class)
-		.addTypedRecipes(NorthstarRecipeTypes.FREEZING)
-		.catalyst(NorthstarTechBlocks.ICE_BOX::get)
-		.itemIcon(NorthstarTechBlocks.ICE_BOX.get())
-		.emptyBackground(177, 70)
-		.build("freezing", FreezingCategory::new),
-		
 		electrolysis = builder(ElectrolysisRecipe.class)
 		.addRecipes(() -> ElectrolysisCategory.RECIPES)
 		.catalyst(NorthstarTechBlocks.ELECTROLYSIS_MACHINE::get)
@@ -350,8 +334,10 @@ public class NorthstarJei implements IModPlugin {
 				.test(matchingStacks[0]);
 	}
 
+	@SuppressWarnings("resource")
 	public static boolean doOutputsMatch(Recipe<?> recipe1, Recipe<?> recipe2) {
-		return ItemStack.isSame(recipe1.getResultItem(), recipe2.getResultItem());
+		RegistryAccess registryAccess = Minecraft.getInstance().level.registryAccess();
+		return ItemHelper.sameItem(recipe1.getResultItem(registryAccess), recipe2.getResultItem(registryAccess));
 	}
 
 }

@@ -8,9 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 import com.lightning.northstar.Northstar;
-import com.lightning.northstar.block.tech.circuit_engraver.EngravingRecipe;
 import com.lightning.northstar.block.tech.electrolysis_machine.ElectrolysisRecipe;
-import com.lightning.northstar.block.tech.ice_box.FreezingRecipe;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder.ProcessingRecipeFactory;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeSerializer;
@@ -18,7 +16,7 @@ import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import com.simibubi.create.foundation.utility.Lang;
 import com.simibubi.create.foundation.utility.RegisteredObjects;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
@@ -32,17 +30,15 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public enum NorthstarRecipeTypes implements IRecipeTypeInfo {
-	
-	ENGRAVING(EngravingRecipe::new),
-	ELECTROLYSIS(ElectrolysisRecipe::new),
-	FREEZING(FreezingRecipe::new);
-	
+
+	ELECTROLYSIS(ElectrolysisRecipe::new);
+
 	private final ResourceLocation id;
 	private final RegistryObject<RecipeSerializer<?>> serializerObject;
 	@Nullable
 	private final RegistryObject<RecipeType<?>> typeObject;
 	private final Supplier<RecipeType<?>> type;
-	
+
 	NorthstarRecipeTypes(Supplier<RecipeSerializer<?>> serializerSupplier, Supplier<RecipeType<?>> typeSupplier, boolean registerType) {
 		String name = Lang.asId(name());
 		id = Create.asResource(name);
@@ -71,7 +67,7 @@ public enum NorthstarRecipeTypes implements IRecipeTypeInfo {
 		Registers.SERIALIZER_REGISTER.register(modEventBus);
 		Registers.TYPE_REGISTER.register(modEventBus);
 	}
-	
+
 
 	@Override
 	public ResourceLocation getId() {
@@ -90,24 +86,24 @@ public enum NorthstarRecipeTypes implements IRecipeTypeInfo {
 	}
 	public <C extends Container, T extends Recipe<C>> Optional<T> find(C inv, Level world) {
 		return world.getRecipeManager()
-			.getRecipeFor(getType(), inv, world);
+				.getRecipeFor(getType(), inv, world);
 	}
 	public static final Set<ResourceLocation> RECIPE_DENY_SET =
 			ImmutableSet.of(new ResourceLocation("occultism", "spirit_trade"), new ResourceLocation("occultism", "ritual"));
 
-		public static boolean shouldIgnoreInAutomation(Recipe<?> recipe) {
-			RecipeSerializer<?> serializer = recipe.getSerializer();
-			if (serializer != null && RECIPE_DENY_SET.contains(RegisteredObjects.getKeyOrThrow(serializer)))
-				return true;
-			return recipe.getId()
+	public static boolean shouldIgnoreInAutomation(Recipe<?> recipe) {
+		RecipeSerializer<?> serializer = recipe.getSerializer();
+		if (serializer != null && RECIPE_DENY_SET.contains(RegisteredObjects.getKeyOrThrow(serializer)))
+			return true;
+		return recipe.getId()
 				.getPath()
 				.endsWith("_manual_only");
-		}
+	}
 
-	
+
 	private static class Registers {
 		private static final DeferredRegister<RecipeSerializer<?>> SERIALIZER_REGISTER = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Northstar.MOD_ID);
-		private static final DeferredRegister<RecipeType<?>> TYPE_REGISTER = DeferredRegister.create(Registry.RECIPE_TYPE_REGISTRY, Northstar.MOD_ID);
+		private static final DeferredRegister<RecipeType<?>> TYPE_REGISTER = DeferredRegister.create(Registries.RECIPE_TYPE, Northstar.MOD_ID);
 	}
 
 }

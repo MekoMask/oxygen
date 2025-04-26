@@ -37,11 +37,11 @@ public class ColdAirParticle  extends SimpleAnimatedParticle {
 		this.zo = z;
 		setAlpha(0.6f);
 	}
-	
+
 	public ParticleRenderType getRenderType() {
 		return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
 	}
-	
+
 	private void selectSprite(int index) {
 		setSprite(sprites.get(index, 8));
 	}
@@ -52,10 +52,10 @@ public class ColdAirParticle  extends SimpleAnimatedParticle {
 
 	@Override
 	public int getLightColor(float partialTick) {
-		BlockPos blockpos = new BlockPos(this.x, this.y, this.z);
+		BlockPos blockpos = new BlockPos((int)this.x, (int)this.y, (int)this.z);
 		return this.level.isLoaded(blockpos) ? LevelRenderer.getLightColor(level, blockpos) : 0;
 	}
-		
+
 	public static class Factory implements ParticleProvider<ColdAirParticleData> {
 		private final SpriteSet spriteSet;
 
@@ -64,11 +64,11 @@ public class ColdAirParticle  extends SimpleAnimatedParticle {
 		}
 
 		public Particle createParticle(ColdAirParticleData data, ClientLevel worldIn, double x, double y, double z,
-				double xSpeed, double ySpeed, double zSpeed) {
+									   double xSpeed, double ySpeed, double zSpeed) {
 			return new ColdAirParticle(worldIn, x, y, z, zSpeed, zSpeed, zSpeed, this.spriteSet);
 		}
 	}
-		
+
 	public static class Data extends BasicParticleData<ColdAirParticle> {
 		@Override
 		public IBasicParticleFactory<ColdAirParticle> getBasicFactory() {
@@ -81,5 +81,5 @@ public class ColdAirParticle  extends SimpleAnimatedParticle {
 			return NorthstarParticles.COLD_AIR.get();
 		}
 	}
-		
+
 }

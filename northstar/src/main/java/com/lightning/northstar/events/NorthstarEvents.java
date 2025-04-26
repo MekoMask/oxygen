@@ -1,9 +1,5 @@
 package com.lightning.northstar.events;
 
-import com.lightning.northstar.block.tech.rocket_controls.RocketControlsServerHandler;
-import com.lightning.northstar.commands.MarsWeather;
-import com.lightning.northstar.commands.VenusWeather;
-
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent.LevelTickEvent;
@@ -22,7 +18,6 @@ public class NorthstarEvents {
 		if (event.side == LogicalSide.CLIENT)
 			return;
 		Level world = event.level;
-		RocketControlsServerHandler.tick(world);
 	}
 	@SubscribeEvent
 	public static void registerCommands(RegisterCommandsEvent event) {

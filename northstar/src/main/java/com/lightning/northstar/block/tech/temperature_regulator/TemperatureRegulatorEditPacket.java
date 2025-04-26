@@ -33,7 +33,7 @@ public class TemperatureRegulatorEditPacket extends BlockEntityConfigurationPack
 	public TemperatureRegulatorEditPacket(FriendlyByteBuf buffer) {
 		super(buffer);
 	}
-	
+
 	public TemperatureRegulatorEditPacket(BlockPos pos, int offX, int offY, int offZ, int sizeX, int sizeY, int sizeZ, int tempChange, boolean envFill) {
 		super(pos);
 		this.offsetX = offX;

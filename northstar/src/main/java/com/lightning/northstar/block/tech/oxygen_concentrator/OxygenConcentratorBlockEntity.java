@@ -19,9 +19,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 @SuppressWarnings("removal")
@@ -149,12 +149,12 @@ public class OxygenConcentratorBlockEntity  extends KineticBlockEntity implement
 		airLevel = compound.getInt("Air");
 		airTimer = compound.getInt("Timer");
 	}
-	
+
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-		if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && side == getBlockState().getValue(OxygenConcentratorBlock.HORIZONTAL_FACING).getOpposite())
+		if (cap == ForgeCapabilities.FLUID_HANDLER && side == getBlockState().getValue(OxygenConcentratorBlock.HORIZONTAL_FACING).getOpposite())
 			return tank.getCapability()
-				.cast();
+					.cast();
 		tank.getCapability().cast();
 		return super.getCapability(cap, side);
 	}

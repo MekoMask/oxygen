@@ -5,8 +5,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.lightning.northstar.item.NorthstarEnchantments;
-
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobType;
@@ -30,17 +28,6 @@ public class PlayerMixin {
         f *= 0.2F + f2 * f2 * 0.8F;
         f1 *= f2;
 
-
-        if (f > 0.0F || f1 > 0.0F) {
-        	int j = EnchantmentHelper.getEnchantmentLevel(NorthstarEnchantments.FROSTBITE.get(), (Player)(Object) this);
-            if (pTarget instanceof LivingEntity) {
-               if (j > 0) {
-            	   //frezzing
-                  pTarget.setTicksFrozen((j * 80) + 150);
-               }
-            }           
-        	
-        }
 	}
 	
 }

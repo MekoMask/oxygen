@@ -22,29 +22,17 @@ public class NorthstarPartialModels {
 	public static final PartialModel
 	IRON_SPACE_SUIT_HELMET = armor("iron_space_suit_helmet"),
 	BROKEN_IRON_SPACE_SUIT_HELMET = armor("broken_iron_space_suit_helmet"),
-	MARTIAN_STEEL_SPACE_SUIT_HELMET = armor("martian_steel_space_suit_helmet"),
-	CIRCUIT_ENGRAVER_HEAD = block("circuit_engraver/head"),
-	CIRCUIT_ENGRAVER_LASER = block("circuit_engraver/laser"),
 	HALF_SHAFT = block("half_shaft"),
 	OXYGEN_CONCENTATOR_FAN = block("oxygen_concentrator/fan"),
 	WARM_SPINNY = block("temperature_regulator/warm_spinny"),
 	COLD_SPINNY = block("temperature_regulator/cold_spinny"),
 	OXYGEN_FAN = block("oxygen_generator/fan"),
-	SMALL_PISTON = block("combustion_engine/small_piston"),
 	PISTON1 = block("combustion_engine/pistons/piston1"),
 	PISTON2 = block("combustion_engine/pistons/piston2"),
 	PISTON3 = block("combustion_engine/pistons/piston3"),
 	PISTON4 = block("combustion_engine/pistons/piston4"),
 	PISTON5 = block("combustion_engine/pistons/piston5"),
-	PISTON6 = block("combustion_engine/pistons/piston6"),
-	CPU1 = block("computer_rack/tier1/cpu1"),
-	CPU2 = block("computer_rack/tier1/cpu2"),
-	CPU3 = block("computer_rack/tier1/cpu3"),
-	CPU4 = block("computer_rack/tier1/cpu4"),
-	CPU5 = block("computer_rack/tier1/cpu5"),
-	CPU6 = block("computer_rack/tier1/cpu6"),
-	CONTROL_LEVER = block("rocket_controls/stick"),
-	CONTROL_LEVER_BLOCK = block("rocket_controls/stick_2");
+	PISTON6 = block("combustion_engine/pistons/piston6");
 
 	
 	public static final Map<FluidTransportBehaviour.AttachmentTypes.ComponentPartials, Map<Direction, PartialModel>> PIPE_ATTACHMENTS =

@@ -55,57 +55,57 @@ public class OxygenStuff {
 		if(NorthstarPlanets.getPlanetOxy(level))
 			return true;
 		if(!oxygenSources.containsValue(level)) {return false;}
-    	for(Entry<Set<BlockPos>, ResourceKey<Level>> blocks:	oxygenSources.entrySet()) {
-    		if(blocks.getValue() == level) {
-    			if(blocks.getKey().contains(pos)) {
-    				return true;
-    			}
-    		}
-    	}
-    	return false;
+		for(Entry<Set<BlockPos>, ResourceKey<Level>> blocks:	oxygenSources.entrySet()) {
+			if(blocks.getValue() == level) {
+				if(blocks.getKey().contains(pos)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	@SubscribeEvent
-    public static void onWorldTick(TickEvent.LevelTickEvent event){
+	public static void onWorldTick(TickEvent.LevelTickEvent event){
 		if(!event.level.isClientSide)
 			return;
-    	long t = event.level.getGameTime();
-    	if(InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_O)){
-				debugMode = true;
+		long t = event.level.getGameTime();
+		if(InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_O)){
+			debugMode = true;
 		}else {
 			debugMode = false;
 		}
-    	if(t % 40 == 0 && debugMode) {
-    		try {
-	    		for(Entry<Set<BlockPos>, ResourceKey<Level>> blocks:	oxygenSources.entrySet()) {
-	    			if(blocks.getValue() == event.level.dimension()) {
-	    				for(BlockPos pos : blocks.getKey()) {
-	    					event.level.addParticle(new GlowstoneParticleData(), pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, 0,0,0);
-	    				}
-	    			}
-	    			
-	    		}
-    		}catch(Exception e) {
-    			//huh
-    		}
-    	}
-    	
-    }	
-    public static Set<BlockPos> spreadOxy(Level level, Set<BlockPos> list, int maxSize) {
-    	List<BlockPos> newBlocks = new ArrayList<BlockPos>();
-    	newBlocks.addAll(list);
-		for(int i = 0; i < newBlocks.size() && i < maxSize;i++) {
-		    	BlockPos pos = newBlocks.get(i);
-		    	for(Direction direction : Direction.values()) {
-		    		BlockPos blockpos = pos.relative(direction);
-		    		if(list.contains(blockpos)) {
-		    			continue;
-		    		}
-		    		if(getIsAir(level.getBlockState(blockpos)) && list.size() < maxSize) 
-		    		{list.add(blockpos); newBlocks.add(blockpos);}
-		    	}
+		if(t % 40 == 0 && debugMode) {
+			try {
+				for(Entry<Set<BlockPos>, ResourceKey<Level>> blocks:	oxygenSources.entrySet()) {
+					if(blocks.getValue() == event.level.dimension()) {
+						for(BlockPos pos : blocks.getKey()) {
+							event.level.addParticle(new GlowstoneParticleData(), pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, 0,0,0);
+						}
+					}
+
+				}
+			}catch(Exception e) {
+				//huh
+			}
 		}
-		return list;   
-    }
+
+	}
+	public static Set<BlockPos> spreadOxy(Level level, Set<BlockPos> list, int maxSize) {
+		List<BlockPos> newBlocks = new ArrayList<BlockPos>();
+		newBlocks.addAll(list);
+		for(int i = 0; i < newBlocks.size() && i < maxSize;i++) {
+			BlockPos pos = newBlocks.get(i);
+			for(Direction direction : Direction.values()) {
+				BlockPos blockpos = pos.relative(direction);
+				if(list.contains(blockpos)) {
+					continue;
+				}
+				if(getIsAir(level.getBlockState(blockpos)) && list.size() < maxSize)
+				{list.add(blockpos); newBlocks.add(blockpos);}
+			}
+		}
+		return list;
+	}
 
 	public static void removeSource(BlockPos pos, Level level, Set<BlockPos> list, Set<BlockPos> newlist) {
 		Set<BlockPos> templist = list;
@@ -121,67 +121,67 @@ public class OxygenStuff {
 			}
 		}
 	}
-    
-    public static List<BlockPos> spreadOxyNew(BlockPos pos, Level level, List<BlockPos> list, int maxSize) {
-    	java.util.List<BlockPos> newblockslist = new ArrayList<BlockPos>();
-    	boolean flag = false;
-        BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
-        for(Direction direction : Direction.values()) {
-        	blockpos.setWithOffset(pos, direction);
-        	BlockPos newpos = new BlockPos(blockpos.getX(), blockpos.getY(), blockpos.getZ());
-        	if(list.contains(blockpos))
-        		continue;
-        	if(getIsAir(level.getBlockState(newpos)) && list.size() < maxSize) 
-        	{list.add(newpos); newblockslist.add(newpos);flag = true;}
-        }
-        if(flag) {
-        	int i = 0;
-        	while(newblockslist.size() != 0 || list.size() < maxSize) {
-        		for(;newblockslist.get(i) == null || list.size() > maxSize; i++) {
-        			BlockPos blockpos2 = newblockslist.get(i);
+
+	public static List<BlockPos> spreadOxyNew(BlockPos pos, Level level, List<BlockPos> list, int maxSize) {
+		java.util.List<BlockPos> newblockslist = new ArrayList<BlockPos>();
+		boolean flag = false;
+		BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
+		for(Direction direction : Direction.values()) {
+			blockpos.setWithOffset(pos, direction);
+			BlockPos newpos = new BlockPos(blockpos.getX(), blockpos.getY(), blockpos.getZ());
+			if(list.contains(blockpos))
+				continue;
+			if(getIsAir(level.getBlockState(newpos)) && list.size() < maxSize)
+			{list.add(newpos); newblockslist.add(newpos);flag = true;}
+		}
+		if(flag) {
+			int i = 0;
+			while(newblockslist.size() != 0 || list.size() < maxSize) {
+				for(;newblockslist.get(i) == null || list.size() > maxSize; i++) {
+					BlockPos blockpos2 = newblockslist.get(i);
 //        			System.out.println(blockpos2);
-        			BlockPos.MutableBlockPos mutpos = blockpos2.mutable();
-        			for(Direction direction : Direction.values()) {
-                		mutpos.setWithOffset(pos, direction);
-                		BlockPos newpos = new BlockPos(mutpos.getX(), mutpos.getY(), mutpos.getZ());
-                		if(getIsAir(level.getBlockState(newpos)) && list.size() < maxSize && !list.contains(blockpos2)) 
-                		{list.add(newpos); newblockslist.add(newpos);}
-                	}
-                	newblockslist.remove(blockpos2);
-                	i--;
-        		}
-        	}
-        }
-		return list;   
-    }
-    public static List<BlockPos> spreadOxy2(Level level, List<BlockPos> list, int maxSize, List<BlockPos> parentList) {
-    	java.util.List<BlockPos> newblockslist = new ArrayList<BlockPos>();
-        BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
-        for(int i = 0; i < list.size() && list.size() < maxSize; i++) {
-        	BlockPos iPos = list.get(i);
+					BlockPos.MutableBlockPos mutpos = blockpos2.mutable();
+					for(Direction direction : Direction.values()) {
+						mutpos.setWithOffset(pos, direction);
+						BlockPos newpos = new BlockPos(mutpos.getX(), mutpos.getY(), mutpos.getZ());
+						if(getIsAir(level.getBlockState(newpos)) && list.size() < maxSize && !list.contains(blockpos2))
+						{list.add(newpos); newblockslist.add(newpos);}
+					}
+					newblockslist.remove(blockpos2);
+					i--;
+				}
+			}
+		}
+		return list;
+	}
+	public static List<BlockPos> spreadOxy2(Level level, List<BlockPos> list, int maxSize, List<BlockPos> parentList) {
+		java.util.List<BlockPos> newblockslist = new ArrayList<BlockPos>();
+		BlockPos.MutableBlockPos blockpos = new BlockPos.MutableBlockPos();
+		for(int i = 0; i < list.size() && list.size() < maxSize; i++) {
+			BlockPos iPos = list.get(i);
 //        	System.out.println(list.size());
-        	for(Direction direction : Direction.values()) {
-        		blockpos.setWithOffset(iPos, direction);
-        		BlockPos newpos = new BlockPos(blockpos.getX(), blockpos.getY(), blockpos.getZ());
-        		if(list.contains(newpos) || parentList.contains(newpos))
-        			continue;
-        		if(getIsAir(level.getBlockState(newpos)) && list.size() < maxSize) 
-        		{newblockslist.add(newpos);}
-        	}
-        }
-        parentList.addAll(newblockslist);
+			for(Direction direction : Direction.values()) {
+				blockpos.setWithOffset(iPos, direction);
+				BlockPos newpos = new BlockPos(blockpos.getX(), blockpos.getY(), blockpos.getZ());
+				if(list.contains(newpos) || parentList.contains(newpos))
+					continue;
+				if(getIsAir(level.getBlockState(newpos)) && list.size() < maxSize)
+				{newblockslist.add(newpos);}
+			}
+		}
+		parentList.addAll(newblockslist);
 		return newblockslist;
-    }
-	
-    public static boolean getIsAir(BlockState state) {
-    	boolean slideFlag = false;
-    	if(state.getBlock() instanceof SlidingDoorBlock) {
-    		slideFlag = state.getValue(SlidingDoorBlock.OPEN);
-    	}
-        return state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag) || !state.getFluidState().isEmpty() || slideFlag;
-     }
-    
-    
+	}
+
+	public static boolean getIsAir(BlockState state) {
+		boolean slideFlag = false;
+		if(state.getBlock() instanceof SlidingDoorBlock) {
+			slideFlag = state.getValue(SlidingDoorBlock.OPEN);
+		}
+		return state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag) || !state.getFluidState().isEmpty() || slideFlag;
+	}
+
+
 	public static ItemStack getOxy(LivingEntity entity) {
 		for(ItemStack items : entity.getArmorSlots())
 		{
@@ -189,12 +189,12 @@ public class OxygenStuff {
 				return items;
 			}
 		}
-		
-		
+
+
 		return new ItemStack(Items.AIR);
-		
+
 	}
-	
+
 	public static void register() {
 		System.out.println("Checking for oxygen for " + Northstar.MOD_ID);
 	}
@@ -202,7 +202,7 @@ public class OxygenStuff {
 	@SubscribeEvent
 	public static void onUpdateLivingEntity(LivingTickEvent event) {
 		LivingEntity entity = event.getEntity();
-		Level world = entity.level;
+		Level world = entity.level();
 		boolean tick = world.getGameTime() % 20 == 0;
 		if (world == null)
 			return;
@@ -214,7 +214,7 @@ public class OxygenStuff {
 			if(checkForAir(entity) || NorthstarPlanets.getPlanetOxy(world.dimension()) || creativeFlag) {
 				return;
 			}
-			
+
 			else{
 //				System.out.println("clover would like to cry but they have no eyes");
 				boolean oxyflag = false;
@@ -240,24 +240,24 @@ public class OxygenStuff {
 				oxygenatedEntities.remove(entity);
 			}
 		}
-		
+
 	}
-    public static boolean checkForAir(LivingEntity entity) {
-    	if(entity.level.isClientSide)
-    		return false;
-	    	try {
-	    		for(Entry<Set<BlockPos>, ResourceKey<Level>> blocks:	oxygenSources.entrySet()) {
-	    			if(blocks.getValue() == entity.level.dimension()) {
-	    				if((blocks.getKey().contains(entity.blockPosition()) || blocks.getKey().contains(entity.blockPosition().above()))) {
-	    					return true;
-	    				}
+	public static boolean checkForAir(LivingEntity entity) {
+		if(entity.level().isClientSide)
+			return false;
+		try {
+			for(Entry<Set<BlockPos>, ResourceKey<Level>> blocks:	oxygenSources.entrySet()) {
+				if(blocks.getValue() == entity.level().dimension()) {
+					if((blocks.getKey().contains(entity.blockPosition()) || blocks.getKey().contains(entity.blockPosition().above()))) {
+						return true;
 					}
-	    		}		
-	    	}catch(Exception e) {
-	    		//bruh
-	    	}
-    		
-    	
+				}
+			}
+		}catch(Exception e) {
+			//bruh
+		}
+
+
 		return false;
 	}
 	public static void depleteOxy(ItemStack stack) {
@@ -265,7 +265,7 @@ public class OxygenStuff {
 		ListTag lore = new ListTag();
 		int oxy = tag.getInt("Oxygen");
 		int newOxy = Mth.clamp(oxy - 1, 0, 5000);
-		lore.add(StringTag.valueOf(Component.Serializer.toJson(Component.literal( "Oxygen: " + newOxy + "mb").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(false))).toString())); 
+		lore.add(StringTag.valueOf(Component.Serializer.toJson(Component.literal( "Oxygen: " + newOxy + "mb").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).withItalic(false))).toString()));
 		tag.remove("Oxygen");
 		tag.putInt("Oxygen", newOxy);
 		stack.getOrCreateTagElement("display").put("Lore", lore);

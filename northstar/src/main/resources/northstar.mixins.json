@@ -5,41 +5,27 @@
 	"compatibilityLevel": "JAVA_17",
 	"refmap": "northstar.refmap.json",
 	"mixins": [
-	"GravityStuffMixin",
-	"OxygenAndTempEntityMixin",
-	"ContraptionTestMixin",
-	"BucketItemMixin",
-	"CompassMixin",
-	"ServerLevelMixin",
-	"WindmillBearingBlockEntityMixin",
-	"MinecraftServerMixin",
-	"MobMixin",
-	"PlayerMixin",
-	"gravitystuff.AbstractArrowGravityMixin",
-	"gravitystuff.AbstractMinecartGravityMixin",
-	"gravitystuff.BoatGravityMixin",
-	"gravitystuff.ItemEntityGravityMixin",
-	"gravitystuff.ThrowableProjectileGravityMixin",
-
-	"blockstuff.FluidStateMixin",
-	"blockstuff.IceBlockMixin",
-	"blockstuff.FireBlockMixin",
-	"blockstuff.TorchMixin",
-	"blockstuff.WallTorchMixin",
-	"blockstuff.TorchItemMixin",
-	"blockstuff.CandleBlockMixin",
-	"blockstuff.CampfireBlockMixin",
-	"blockstuff.LanternBlockMixin"
+		"OxygenAndTempEntityMixin",
+		"BucketItemMixin",
+		"ServerLevelMixin",
+		"WindmillBearingBlockEntityMixin",
+		"MobMixin",
+		"PlayerMixin",
+		"blockstuff.FluidStateMixin",
+		"blockstuff.IceBlockMixin",
+		"blockstuff.FireBlockMixin",
+		"blockstuff.TorchMixin",
+		"blockstuff.WallTorchMixin",
+		"blockstuff.TorchItemMixin",
+		"blockstuff.CandleBlockMixin",
+		"blockstuff.CampfireBlockMixin",
+		"blockstuff.LanternBlockMixin"
 	],
 	"client": [
-	"dimensionstuff.DimensionSpecialEffectsMixin",
-	"dimensionstuff.LevelRendererMixin",
-	"dimensionstuff.FogRendererMixin",
-	"LivingEntityRendererMixin",
-	"PlayerFrostEffectMixin"
+		"LivingEntityRendererMixin"
 	],
 	"minVersion": "0.8.5",
 	"injectors": {
-    "defaultRequire": 1
-  }
+		"defaultRequire": 1
+	}
 }

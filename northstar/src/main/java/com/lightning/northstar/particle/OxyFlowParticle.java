@@ -30,11 +30,11 @@ public class OxyFlowParticle  extends SimpleAnimatedParticle {
 		this.zo = z;
 		setAlpha(.25f);
 	}
-	
+
 	public ParticleRenderType getRenderType() {
 		return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
 	}
-	
+
 	private void selectSprite(int index) {
 		setSprite(sprites.get(index, 8));
 	}
@@ -45,10 +45,10 @@ public class OxyFlowParticle  extends SimpleAnimatedParticle {
 
 	@Override
 	public int getLightColor(float partialTick) {
-		BlockPos blockpos = new BlockPos(this.x, this.y, this.z);
+		BlockPos blockpos = new BlockPos((int)this.x, (int)this.y, (int)this.z);
 		return this.level.isLoaded(blockpos) ? LevelRenderer.getLightColor(level, blockpos) : 0;
 	}
-		
+
 	public static class Factory implements ParticleProvider<OxyFlowParticleData> {
 		private final SpriteSet spriteSet;
 
@@ -57,11 +57,11 @@ public class OxyFlowParticle  extends SimpleAnimatedParticle {
 		}
 
 		public Particle createParticle(OxyFlowParticleData data, ClientLevel worldIn, double x, double y, double z,
-				double xSpeed, double ySpeed, double zSpeed) {
+									   double xSpeed, double ySpeed, double zSpeed) {
 			return new OxyFlowParticle(worldIn, x, y, z, zSpeed, zSpeed, zSpeed, this.spriteSet);
 		}
 	}
-		
+
 	public static class Data extends BasicParticleData<OxyFlowParticle> {
 		@Override
 		public IBasicParticleFactory<OxyFlowParticle> getBasicFactory() {
@@ -74,5 +74,5 @@ public class OxyFlowParticle  extends SimpleAnimatedParticle {
 			return NorthstarParticles.OXY_FLOW.get();
 		}
 	}
-		
+
 }

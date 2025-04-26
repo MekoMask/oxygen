@@ -51,7 +51,7 @@ public class SpawnParticlePacket extends SimplePacketBase {
 			ServerPlayer player = context.getSender();
 			if (player == null)
 				return;
-			Level world = player.level;
+			Level world = player.level();
 			if (world == null || !world.isLoaded(pos))
 				return;
 			BlockEntity blockEntity = world.getBlockEntity(pos);
@@ -84,10 +84,10 @@ public class SpawnParticlePacket extends SimplePacketBase {
 		@Override
 		public boolean handle(Context context) {
 			context.enqueueWork(
-				() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> EjectorTargetHandler.flushSettings(pos)));
+					() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> EjectorTargetHandler.flushSettings(pos)));
 			return true;
 		}
 
 	}
-	
+
 }

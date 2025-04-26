@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.lightning.northstar.Northstar;
-import com.lightning.northstar.world.dimension.NorthstarDimensions;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.core.Direction;
@@ -34,14 +33,7 @@ public class WeatherStuff {
 //			}
 //		}
 //	}
-	
-	public static void init() {
-			managedPlanets.put(null, NorthstarDimensions.MARS_DIM_KEY);
-			managedPlanets.put(null, NorthstarDimensions.VENUS_DIM_KEY);
-	}
-	
-	
-	
+
 	public Pair<Direction,Direction> getWindDirection(ResourceKey<Level> lev){
 		if(managedPlanets.containsValue(lev)) {
 			for(Entry<Pair<Pair<Direction, Direction>, Pair<WeatherCondition, Integer>>, ResourceKey<Level>> entries:	managedPlanets.entrySet()) {
@@ -65,16 +57,5 @@ public class WeatherStuff {
 		}
 		return WeatherCondition.CLEAR;
 	}
-	
-	public static boolean hasWind(ResourceKey<Level> lev) {
-		return lev == NorthstarDimensions.MARS_DIM_KEY;
-	}
-	
-	public static boolean hasWeather(ResourceKey<Level> lev) {
-		if(lev == NorthstarDimensions.MARS_DIM_KEY) {return true;}
-		else if(lev == NorthstarDimensions.VENUS_DIM_KEY) {return true;}
-		return false;
-	}
-	
-	
+
 }

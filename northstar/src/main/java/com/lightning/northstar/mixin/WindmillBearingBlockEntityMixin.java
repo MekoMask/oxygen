@@ -42,9 +42,7 @@ public abstract class WindmillBearingBlockEntityMixin extends MechanicalBearingB
 			{int sails = ((BearingContraption) movedContraption.getContraption()).getSailBlocks()
 				/ AllConfigs.server().kinetics.windmillSailsPerRPM.get();
 			finalwindValue = Mth.clamp(sails, 1, 16) * getAngleSpeedDirection2();}
-			
-			
-			info.setReturnValue(finalwindValue * NorthstarPlanets.getWindMultiplier(level));
+
 			info.cancel();
     	}
 	}

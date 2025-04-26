@@ -26,7 +26,7 @@ public class OxygenGeneratorBlock extends HorizontalKineticBlock implements IBE<
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
 		return IBE.super.newBlockEntity(pPos, pState);
-	}	
+	}
 	@Override
 	public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
 		System.out.println("BIG STEVE IS REAL");
@@ -48,7 +48,7 @@ public class OxygenGeneratorBlock extends HorizontalKineticBlock implements IBE<
 		return face == Direction.DOWN;
 	}
 	public boolean isPathfindable(BlockState pState, BlockGetter pLevel, BlockPos pPos, PathComputationType pType) {
-	     return false;
+		return false;
 	}
 	public RenderShape getRenderShape(BlockState pState) {
 		return RenderShape.MODEL;

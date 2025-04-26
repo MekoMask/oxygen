@@ -14,17 +14,17 @@ public class OxygenGeneratorInstance extends SingleRotatingInstance<OxygenGenera
 
 	private final RotatingData propeller;
 	private final OxygenGeneratorBlockEntity gen;
-	
+
 	public OxygenGeneratorInstance(MaterialManager materialManager, OxygenGeneratorBlockEntity blockEntity) {
 		super(materialManager, blockEntity);
 		propeller = materialManager.defaultCutout()
 				.material(AllMaterialSpecs.ROTATING)
 				.getModel(NorthstarPartialModels.OXYGEN_FAN, blockState)
-				.createInstance();	
+				.createInstance();
 		propeller.setRotationAxis(Direction.Axis.Y);
 		gen = blockEntity;
 	}
-	
+
 	@Override
 	protected Instancer<RotatingData> getModel() {
 		return getRotatingMaterial().getModel(NorthstarPartialModels.HALF_SHAFT);
@@ -37,24 +37,24 @@ public class OxygenGeneratorInstance extends SingleRotatingInstance<OxygenGenera
 	}
 	private void transformModels() {
 	}
-	
+
 	private void transformSpinnys() {
 		float speed = gen.getSpeed();
 		propeller.setPosition(getInstancePosition().offset(0, 0, 0))
-		.setRotationalSpeed(speed);
+				.setRotationalSpeed(speed);
 	}
-	
+
 	@Override
 	public void updateLight() {
 		super.updateLight();
 		relight(pos, propeller);
 	}
-	
+
 	@Override
 	public void remove() {
 		super.remove();
 		propeller.delete();
 	}
-	
+
 
 }

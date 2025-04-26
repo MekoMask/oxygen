@@ -1,6 +1,5 @@
 package com.lightning.northstar.client;
 
-import com.lightning.northstar.contraptions.RocketContraptionEntity;
 import com.lightning.northstar.item.client.SpaceSuitFirstPersonRenderer;
 import com.simibubi.create.content.trains.CameraDistanceModifier;
 
@@ -31,7 +30,7 @@ public class ClientEvents {
 			return;
 		}
 
-		if (!event.isMounting() || !(event.getEntityBeingMounted() instanceof RocketContraptionEntity rocket)) {
+		if (!event.isMounting()) {
 			return;
 		}
 
