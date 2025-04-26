@@ -7,6 +7,7 @@ import net.minecraft.world.level.material.FluidState;
 
 import com.lightning.northstar.Northstar;
 import com.lightning.northstar.NorthstarTags;
+import com.lightning.northstar.particle.GlowstoneParticleData;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -21,6 +22,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
@@ -46,6 +49,34 @@ public class OxygenStuff {
 		}
 		return false;
 	}
+
+	@SubscribeEvent
+	public static void onWorldTick(TickEvent.LevelTickEvent event){
+		if(!event.level.isClientSide)
+		{ return; }
+		long t = event.level.getGameTime();
+//		if(InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_O)){
+//			debugMode = true;
+//		}else {
+//			debugMode = false;
+//		}
+		if(t % 40 == 0 && debugMode) {
+			try {
+				for(Entry<Set<BlockPos>, ResourceKey<Level>> blocks:	oxygenSources.entrySet()) {
+					if(blocks.getValue() == event.level.dimension()) {
+						for(BlockPos pos : blocks.getKey()) {
+							event.level.addParticle(new GlowstoneParticleData(), pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, 0,0,0);
+						}
+					}
+
+				}
+			}catch(Exception e) {
+				//huh
+			}
+		}
+
+	}
+
 
 	public static Set<BlockPos> spreadOxygen(Level level, BlockPos origin, int maxSize) {
 		// Use FloodFill3D.run for efficient oxygen spreading

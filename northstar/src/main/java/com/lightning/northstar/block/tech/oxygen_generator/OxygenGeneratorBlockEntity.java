@@ -1,37 +1,16 @@
 package com.lightning.northstar.block.tech.oxygen_generator;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.lightning.northstar.NorthstarTags;
-import com.lightning.northstar.fluids.NorthstarFluids;
-import com.lightning.northstar.particle.OxyFlowParticleData;
-import com.lightning.northstar.sound.NorthstarSounds;
 import com.lightning.northstar.world.OxygenStuff;
-import com.simibubi.create.content.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.equipment.goggles.IHaveHoveringInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
-import com.simibubi.create.foundation.utility.Lang;
-import com.simibubi.create.foundation.utility.LangBuilder;
-import com.simibubi.create.infrastructure.config.AllConfigs;
-
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-//import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 public class OxygenGeneratorBlockEntity extends KineticBlockEntity {
 	public Set<BlockPos> oxygenBlobs = new HashSet<>();
@@ -48,9 +27,13 @@ public class OxygenGeneratorBlockEntity extends KineticBlockEntity {
 
 		if (gameTime % SPREAD_INTERVAL == 0) {
 			if (canGenerateOxygen()) {
-				Set<BlockPos> newBlobs = OxygenStuff.spreadOxygen(level, getBlockPos().above(), getMaxOxygenCapacity());
-				OxygenStuff.removeSource(getBlockPos(), level, oxygenBlobs);
-				oxygenBlobs = newBlobs;
+				BlockPos positionAbove = getBlockPos().above();
+				BlockState stateAbove = getBlockStateSafe(level, positionAbove);
+				if (stateAbove != null && stateAbove.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag)) {
+					Set<BlockPos> newBlobs = OxygenStuff.spreadOxygen(level, positionAbove, getMaxOxygenCapacity());
+					OxygenStuff.removeSource(getBlockPos(), level, oxygenBlobs);
+					oxygenBlobs = newBlobs;
+				}
 			} else {
 				removeOxygen();
 			}
@@ -58,13 +41,11 @@ public class OxygenGeneratorBlockEntity extends KineticBlockEntity {
 	}
 
 	private boolean canGenerateOxygen() {
-		// Add logic for checking whether the generator can produce oxygen
 		return !isOverStressed() && hasSufficientOxygen();
 	}
 
 	private boolean hasSufficientOxygen() {
-		// Add logic for checking oxygen levels in the tank
-		return true; // Placeholder
+		return true; // Placeholder logic for oxygen sufficiency
 	}
 
 	private int getMaxOxygenCapacity() {
@@ -72,7 +53,19 @@ public class OxygenGeneratorBlockEntity extends KineticBlockEntity {
 	}
 
 	public void removeOxygen() {
+		if (getBlockPos() == null) {
+			System.err.println("OxygenGeneratorBlockEntity: BlockPos is null during oxygen removal!");
+			return;
+		}
+
 		OxygenStuff.removeSource(getBlockPos(), level, oxygenBlobs);
 		oxygenBlobs.clear();
+	}
+
+	private BlockState getBlockStateSafe(Level level, BlockPos pos) {
+		if (level == null || pos == null) {
+			return null;
+		}
+		return level.getBlockState(pos);
 	}
 }
