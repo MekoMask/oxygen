@@ -49,7 +49,7 @@ public class OxygenStuff {
 	public static List<LivingEntity> oxygenatedEntities = new ArrayList<LivingEntity>();
 	public static int power = 2000;
 	public static int maximumOxy = 2000;
-	public static boolean debugMode = false;
+	public static boolean debugMode = true;
 
 	public static boolean hasOxygen(BlockPos pos, ResourceKey<Level> level) {
 		if(NorthstarPlanets.getPlanetOxy(level))
@@ -69,11 +69,11 @@ public class OxygenStuff {
 		if(!event.level.isClientSide)
 			return;
 		long t = event.level.getGameTime();
-		if(InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_O)){
-			debugMode = true;
-		}else {
-			debugMode = false;
-		}
+//		if(InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_O)){
+//			debugMode = true;
+//		}else {
+//			debugMode = false;
+//		}
 		if(t % 40 == 0 && debugMode) {
 			try {
 				for(Entry<Set<BlockPos>, ResourceKey<Level>> blocks:	oxygenSources.entrySet()) {
@@ -94,6 +94,7 @@ public class OxygenStuff {
 		List<BlockPos> newBlocks = new ArrayList<BlockPos>();
 		newBlocks.addAll(list);
 		for(int i = 0; i < newBlocks.size() && i < maxSize;i++) {
+			System.out.println("UGHHH");
 			BlockPos pos = newBlocks.get(i);
 			for(Direction direction : Direction.values()) {
 				BlockPos blockpos = pos.relative(direction);
@@ -181,7 +182,7 @@ public class OxygenStuff {
 		if(state.getBlock() instanceof SlidingDoorBlock) {
 			slideFlag = state.getValue(SlidingDoorBlock.OPEN);
 		}
-		System.out.println(state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag) || !state.getFluidState().isEmpty() || slideFlag);
+		//System.out.println(state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag) || !state.getFluidState().isEmpty() || slideFlag);
 		return state.is(NorthstarTags.NorthstarBlockTags.AIR_PASSES_THROUGH.tag) || !state.getFluidState().isEmpty() || slideFlag;
 	}
 
